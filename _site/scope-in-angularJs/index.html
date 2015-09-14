@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--
+    * Author:         BeiYuu
+    -->
+    <meta charset="utf-8" />
+    <title>关于AngularJs的作用域 | BeiYuu.com</title>
+    <meta name="author" content="BieYuu" />
+    <meta name="renderer" content="webkit">
+    <meta name="description" content="BeiYuu's Blog" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="/css/default.css" type="text/css" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/atom.xml" />
+    <script src="/js/jquery-1.7.1.min.js" type="text/javascript"></script>
+</head>
+<body>
+
+    <div class="home-menu">
+        <div class="home-icon-con">
+            <a class="home-menu-icon" href="/">BeiYuu</a>
+            <a class="home-follow" href="#" title="Contact Me">+</a>
+        </div>
+        <div class="home-contact">
+            <a href="http://weibo.com/beiyuu/" target="_blank" style="margin-left:-5px;"><img src="http://www.weibo.com/favicon.ico" alt="" width="25"/></a>
+            <a href="http://www.douban.com/people/beiyuu/" target="_blank" style="text-align:center;"><img src="http://www.douban.com/favicon.ico" alt="" width="22"/></a>
+            <a href="http://instagram.com/beiyuu/" target="_blank" style="text-align:right"><img src="http://d36xtkk24g8jdx.cloudfront.net/bluebar/00c6602/images/ico/favicon.ico" alt="" width="22"/></a>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="/js/prettify/prettify.css" />
+<style type="text/css">
+    body { background:#e8e8e8; }
+    @media screen and (max-width: 750px){
+        body { background:#fff; }
+    }
+    @media screen and (max-width: 1020px){
+        body { background:#fff; }
+    }
+</style>
+
+<div id="content">
+    <div class="entry">
+        <h1 class="entry-title"><a href="/scope-in-angularJs" title="关于AngularJs的作用域">关于AngularJs的作用域</a></h1>
+        <p class="entry-date">2015-09-14</p>
+        <p>AngularJs中的作用域(scope)是定义应用的业务逻辑，控制器方法和视图属性的地方。$scope的所有属性都可以自动被视图访问。基于AngularJs动态绑定，视图上的修改会立即更新到$scope,也可以依赖$scope在其发生变化时立刻重新渲染视图。</p>
+
+<h5>作用域的基本功能：</h5>
+
+<ol>
+<li>提供观察者以监控数据模型的变化。</li>
+<li>可以将数据模型的变化通知给整个应用，甚至是系统以外的组件。</li>
+<li>可以进行嵌套，蛤蜊业务功能和数据。</li>
+<li>给表达式提供运算时所需要的执行环境。</li>
+</ol>
+
+
+<p>$scope的生命周期可以分为四个不同的阶段。</p>
+
+<h5>创建</h5>
+
+<p> 在创建一个新的控制器或者指令(directive)时会创建一个新的$scope, 并且在创建新控制器的函数中将作用域传递进去。
+ $rootScope - ng-app元素同$rootScope进行绑定，它是所有$scope对象的最上层。
+ 除了$rootScope以外,下面列举出会创建scope的内置指令：</p>
+
+<ul>
+<li>ng-include</li>
+<li>ng-switch</li>
+<li>ng-repeat</li>
+<li>ng-view</li>
+<li>ng-controller</li>
+<li>ng-if</li>
+</ul>
+
+
+<p> 除了这些内置指令以外，如果想要在自定义的指令中创建新的scope，可通过设置属性scope为true来实现。</p>
+
+<pre><code> angular.module('myApp', [])
+ .directive('myDirective', function(){
+   return {
+    scope: true,
+ }      .......
+ });
+</code></pre>
+
+<h5>链接</h5>
+
+<p> 当AngularJs开始运行时，所有的$scope都会附加或链接到视图中。这些作用域会注册到AngularJs应用上下文发生变化时需要的运行函数($watch函数)。
+ 每个scope都有自己的watch列表</p>
+
+<h5>更新</h5>
+
+<p> 当事件循环运行时，它通常运行在顶层的$scope- $rootscope上。每个作用域都会执行自己的脏值检测，每个监控函数都会检查变化，一旦检测到任意变化就会触发指定的回调函数。</p>
+
+<h5>销毁</h5>
+
+<p> 当一个$scope在视图中不再需要时，这个作用域将会清理和销毁。</p>
+
+    </div>
+
+    <div class="sidenav">
+        <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=75&fansRow=2&ptype=1&speed=0&skin=5&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1855270953&verifier=375b89d6&dpc=1"></iframe>
+    </div>
+
+    <div class="sidenav">
+        <h2>Blog</h2>
+        <ul class="artical-list">
+        
+            <li><a href="/scope-in-angularJs">关于AngularJs的作用域</a></li>
+        
+            <li><a href="/github-pages">使用Github Pages建独立博客</a></li>
+        
+            <li><a href="/why-blog">我为什么写博客？</a></li>
+        
+        </ul>
+
+        <h2>Opinion</h2>
+        <ul class="artical-list">
+        
+            <li><a href="/about-simplify">胡言乱语说简单</a></li>
+        
+        </ul>
+
+        <h2>Project</h2>
+        <ul class="artical-list">
+        
+            <li><a href="/tabby">Tabby</a></li>
+        
+            <li><a href="/notty-notes">Notty Notes</a></li>
+        
+            <li><a href="/overapi-cheatsheet">OverAPI</a></li>
+        
+            <li><a href="/raining-in-chrome">听雨</a></li>
+        
+        </ul>
+    </div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+
+    <script type="text/javascript">
+        $(function(){
+            $('.home-follow').click(function(e){
+                e.preventDefault();
+
+                if($('.home-contact').is(':visible')){
+                    $('.home-contact').slideUp(100);
+                }else{
+                    $('.home-contact').slideDown(100);
+                }
+            });
+        })
+    </script>
+</body>
+</html>
