@@ -5,7 +5,7 @@
     * Author:         BeiYuu
     -->
     <meta charset="utf-8" />
-    <title>OverAPI | BeiYuu.com</title>
+    <title>关于AngularJs的作用域 | BeiYuu.com</title>
     <meta name="author" content="BieYuu" />
     <meta name="renderer" content="webkit">
     <meta name="description" content="BeiYuu's Blog" />
@@ -42,41 +42,60 @@
 
 <div id="content">
     <div class="entry">
-        <h1 class="entry-title"><a href="/overapi-cheatsheet" title="OverAPI">OverAPI</a></h1>
-        <p class="entry-date">2012-09-22</p>
-        <p><a href="http://overapi.com" title="OverAPI - Collecting all the cheat sheets">OverAPI</a>是一个从我自己的需求出发，搭建起来的项目。项目结构很简单，将常用语言的API很扁平的展现出来，方便翻阅和查找。</p>
+        <h1 class="entry-title"><a href="/scope-in-angularJs" title="关于AngularJs的作用域">关于AngularJs的作用域</a></h1>
+        <p class="entry-date">2015-09-14</p>
+        <p>AngularJs中的作用域(scope)是定义应用的业务逻辑，控制器方法和视图属性的地方。$scope的所有属性都可以自动被视图访问。基于AngularJs动态绑定，视图上的修改会立即更新到$scope,也可以依赖$scope在其发生变化时立刻重新渲染视图。</p>
 
-<p>Chrome插件下载：<a href="https://chrome.google.com/webstore/detail/oedodeocfdeegliepeeoieemhdgoijod?hl=zh-CN" title="All Cheat Sheets">All Cheat Sheets</a></p>
+<h5>作用域的基本功能：</h5>
 
-<p><a href="http://overapi.com" title="OverAPI - Collecting all the cheat sheets" target="_blank"><img src="/images/overapi/overapi.jpg" alt="OverAPI"></a></p>
+<ol>
+<li>提供观察者以监控数据模型的变化。</li>
+<li>可以将数据模型的变化通知给整个应用，甚至是系统以外的组件。</li>
+<li>可以进行嵌套，蛤蜊业务功能和数据。</li>
+<li>给表达式提供运算时所需要的执行环境。</li>
+</ol>
 
-<p>生活在继续，遇到的人和事越来越繁杂，于是，满目的秋意、愉悦的欢叫，都像微风一样，带来的是美妙的简单。</p>
 
-<p>我们总想拥有一切，可一切到底有多少，就像诺兰的处女作<a href="http://movie.douban.com/subject/1397546/" title="Following">Following</a>中表现的一样，一些物品只有在失去时才知道他存在过。</p>
+<p>$scope的生命周期可以分为四个不同的阶段。</p>
 
-<p>人生有目标才能前进，无论这个目标能否实现，OverAPI的目标是拥有一切，如果你有兴趣一起实现，可以联系我。</p>
+<h5>创建</h5>
 
-<p>现在已经有：</p>
+<p> 在创建一个新的控制器或者指令(directive)时会创建一个新的$scope, 并且在创建新控制器的函数中将作用域传递进去。
+ $rootScope - ng-app元素同$rootScope进行绑定，它是所有$scope对象的最上层。
+ 除了$rootScope以外,下面列举出会创建scope的内置指令：</p>
 
 <ul>
-<li><a href="http://overapi.com/python/">Python Cheat Sheet</a></li>
-<li><a href="http://overapi.com/jquery/">jQuery Cheat Sheet</a></li>
-<li><a href="http://overapi.com/nodejs/">NodeJS Cheat Sheet</a></li>
-<li><a href="http://overapi.com/php/">PHP Cheat Sheet</a></li>
-<li><a href="http://overapi.com/ruby/">Ruby Cheat Sheet</a></li>
-<li><a href="http://overapi.com/javascript/">Javascript Cheat Sheet</a></li>
-<li><a href="http://overapi.com/actionscript/">ActionScript Cheat Sheet</a></li>
-<li><a href="http://overapi.com/css/">CSS Cheat Sheet</a></li>
-<li><a href="http://overapi.com/git/">Git Cheat Sheet</a></li>
-<li><a href="http://overapi.com/svn/">SVN Cheat Sheet</a></li>
-<li><a href="http://overapi.com/mysql/">MySQL Cheat Sheet</a></li>
-<li><a href="http://overapi.com/regex/">Regex Cheat Sheet</a></li>
-<li><a href="http://overapi.com/linux/">Linux Cheat Sheet</a></li>
-<li><a href="http://overapi.com/html/">HTML Cheat Sheet</a></li>
-<li><a href="http://overapi.com/html-dom/">HTML-DOM Cheat Sheet</a></li>
-<li><a href="http://overapi.com/mod_rewrite/">mod_rewrite Cheat Sheet</a></li>
+<li>ng-include</li>
+<li>ng-switch</li>
+<li>ng-repeat</li>
+<li>ng-view</li>
+<li>ng-controller</li>
+<li>ng-if</li>
 </ul>
 
+
+<p> 除了这些内置指令以外，如果想要在自定义的指令中创建新的scope，可通过设置属性scope为true来实现。</p>
+
+<pre><code> angular.module('myApp', [])
+ .directive('myDirective', function(){
+   return {
+    scope: true,
+ }      .......
+ });
+</code></pre>
+
+<h5>链接</h5>
+
+<p> 当AngularJs开始运行时，所有的$scope都会附加或链接到视图中。这些作用域会注册到AngularJs应用上下文发生变化时需要的运行函数($watch函数)。
+ 每个scope都有自己的watch列表</p>
+
+<h5>更新</h5>
+
+<p> 当事件循环运行时，它通常运行在顶层的$scope- $rootscope上。每个作用域都会执行自己的脏值检测，每个监控函数都会检查变化，一旦检测到任意变化就会触发指定的回调函数。</p>
+
+<h5>销毁</h5>
+
+<p> 当一个$scope在视图中不再需要时，这个作用域将会清理和销毁。</p>
 
     </div>
 
