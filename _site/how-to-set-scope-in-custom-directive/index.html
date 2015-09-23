@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--
+    * Author:         HuangYan
+    -->
+    <meta charset="utf-8" />
+    <title>如何在directive正确设置scope的值 | HuangYan</title>
+    <meta name="author" content="HuangYan" />
+    <meta name="renderer" content="webkit">
+    <meta name="description" content="HuangYan's Blog" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="/css/default.css" type="text/css" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/atom.xml" />
+    <script src="/js/jquery-1.7.1.min.js" type="text/javascript"></script>
+</head>
+<body>
+
+    <div class="home-menu">
+        <div class="home-icon-con">
+            <a class="home-menu-icon" href="/">HuangYan</a>
+            <a class="home-follow" href="#" title="Contact Me">+</a>
+        </div>
+        <div class="home-contact">
+            <a href="http://weibo.com/u/1798401165" target="_blank" style="margin-left:-5px;"><img src="http://www.weibo.com/favicon.ico" alt="" width="25"/></a>
+            <a href="http://www.douban.com/people/11059303/" target="_blank" style="text-align:center;"><img src="http://www.douban.com/favicon.ico" alt="" width="22"/></a>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="/js/prettify/prettify.css" />
+<style type="text/css">
+    body { background:#e8e8e8; }
+    @media screen and (max-width: 750px){
+        body { background:#fff; }
+    }
+    @media screen and (max-width: 1020px){
+        body { background:#fff; }
+    }
+</style>
+
+<div id="content">
+    <div class="entry">
+        <h1 class="entry-title"><a href="/how-to-set-scope-in-custom-directive" title="如何在directive正确设置scope的值">如何在directive正确设置scope的值</a></h1>
+        <p class="entry-date">2015-09-17</p>
+        <p>不知道大家有没有尝试过在自定义的directive更新scope上的值。如果有，你肯定遇到过这个坑。
+下面我们来看如下这个实例。</p>
+
+<h6>html</h6>
+
+<p><br/></p>
+
+<pre><code>&lt;body ng-app="exercise"&gt;
+    &lt;div ng-controller="MyController"&gt;
+        &lt;p&gt;Can you speak Chinese? &lt;/p&gt;
+        &lt;button type="button" value=“Yes” ng-click="selectYes()"&gt;Yes&lt;/button&gt;
+        &lt;button type="button" value=“No” say-no&gt;No&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+</code></pre>
+
+<h6>自定义的directive say-no</h6>
+
+<p><br/></p>
+
+<pre><code>angular.module("exercise", [])
+.directive("sayNo", function() {
+    var clickNo = function(scope, element, attrs) {
+        element.on("click", function() {
+            scope.isAbleChinese = 'No';
+        });
+    };
+    return clickNo; 
+});
+</code></pre>
+
+<p>打开页面，下面显示如下，</p>
+
+<p><img src="https://ooo.0o0.ooo/2015/09/23/5602a0d195492.png" alt="打开页面" /></p>
+
+<p>可以看到页面有两个按钮，点击他们，分别会将“Cane you speak Chinese?” 的答案Yes或No显示出来。其中，Yes是通过内置指令ng-click来设置答案的，而No按钮时通过自定义directive say-no来处理按钮点击事件。</p>
+
+<h5>首先我们来看以下No按钮-自定义directive</h5>
+
+<p>点击No按钮，页面没有任何变化。</p>
+
+<p><img src="https://ooo.0o0.ooo/2015/09/23/5602a0d195492.png" alt="点击No" /></p>
+
+<p>调试发现，scope中的isAbleChinese已经被赋值为No，但页面仍然没有显示出No，isAbleChinese显示结果仍然是空。</p>
+
+<p>这是为什么呢？在directive中的代码后面添加scope.$apply()试试看会怎么样？</p>
+
+<pre><code>angular.module("exercise", [])
+.directive("sayNo", function() {
+    var clickNo = function(scope, element, attrs) {
+        element.on("click", function() {
+            scope.isAbleChinese = 'No';
+            scope.$apply();
+        });
+    };
+    return clickNo; 
+});
+</code></pre>
+
+<p>发现isAbleChinese的值被更新No中。</p>
+
+<p><img src="https://ooo.0o0.ooo/2015/09/23/5602a78de6572.png" alt="加上apply在点击No" /></p>
+
+<p>通过扒代码，可以发现scope的$apply()方法调用了$digest(),而在$digest()中会触发AngularJs的事件循环$digest。$digest会调用相应的watchers列表，而每个watcher会检查当前scope中的值是否有更改，如果有变化，监听函数会被触发model上的值会被更新到view中。</p>
+
+<h6>所以说如果想在自定义的directive设置完scope上的value，想要更新到view上，就需要调用scope.$apply() 方法。</h6>
+
+<h5>那我们现在再来看看内置指令。（内置指令就是以ng开头的directive，angularJs中定义的directive）</h5>
+
+<p>点击Yes按钮，可以看到scope中的isAbleChinese被赋值Yes，并且显示到页面。</p>
+
+<p><img src="https://ooo.0o0.ooo/2015/09/23/5602a2d7cda74.png" alt="点击Yes" /></p>
+
+<p>大家可以看到Yes按钮是通过内置指令ng-click来设置isAbleChinese。 但是大家有没有想过为什么在内置directive里更新scope上的值可以立即反应到页面上，我们在使用的时候却没有调用$digest()/$apply(）。</p>
+
+<h6>这是因为所有的内置指令都会将方法包裹在scope.$apply()方法中执行。即执行完方法后都会执行scope.$apply()将改变反映到view上。</h6>
+
+    </div>
+
+    <div class="sidenav">
+        <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=75&fansRow=2&ptype=1&speed=0&skin=5&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1855270953&verifier=375b89d6&dpc=1"></iframe>
+    </div>
+
+    <div class="sidenav">
+        <h2>Blog</h2>
+        <ul class="artical-list">
+        
+            <li><a href="/how-to-set-scope-in-custom-directive">如何在directive正确设置scope的值</a></li>
+        
+            <li><a href="/scope-in-angularJs">关于AngularJs的作用域</a></li>
+        
+        </ul>
+
+        <h2>Opinion</h2>
+        <ul class="artical-list">
+        
+        </ul>
+
+        <h2>Project</h2>
+        <ul class="artical-list">
+        
+        </ul>
+    </div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+
+    <script type="text/javascript">
+        $(function(){
+            $('.home-follow').click(function(e){
+                e.preventDefault();
+
+                if($('.home-contact').is(':visible')){
+                    $('.home-contact').slideUp(100);
+                }else{
+                    $('.home-contact').slideDown(100);
+                }
+            });
+        })
+    </script>
+</body>
+</html>
