@@ -4,8 +4,7 @@ title: 如何在directive正确设置scope的值
 description: 自定义directive设置scope上的值后，必须调用scope.$apply()才能更新到view上
 category: blog
 ---
-<img class="rich_media_thumb" id="js_cover" style="width: 300px; height: 300px;" src="https://ooo.0o0.ooo/2015/09/24/560405bbc9043.jpeg">
-
+<img data-s="300,640" data-type="jpeg" data-src="http://mmbiz.qpic.cn/mmbiz/zFSsAkMzBgzGiaQQib8a1gial2NP6VuRBDOZLH0ks3leac4gPBkJEgONoE9YibQIoI7icSxPKGuaB5icqC3jyOYONxuQ/0?wx_fmt=jpeg" style="white-space: normal; width: auto !important; visibility: visible !important; height: auto !important;" data-ratio="0.6633466135458167" data-w="" src="http://mmbiz.qpic.cn/mmbiz/zFSsAkMzBgzGiaQQib8a1gial2NP6VuRBDOZLH0ks3leac4gPBkJEgONoE9YibQIoI7icSxPKGuaB5icqC3jyOYONxuQ/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1">
 不知道大家有没有尝试过在自定义的directive更新scope上的值。如果有，你肯定遇到过这个坑。
 下面我们来看如下这个实例。
 
