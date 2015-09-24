@@ -4,6 +4,9 @@
     <!--
     * Author:         HuangYan
     -->
+    <div id='wx_pic' style='margin:0 auto;display:none;'>
+        <img src='/image/data/pic300.jpg' />
+    </div>
     <meta charset="utf-8" />
     <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
     <meta name="author" content="HuangYan" />
@@ -31,6 +34,8 @@
     {{ content }}
 
     <script type="text/javascript">
+        var write_sceen_time = (+new Date());
+        (sampling) && ((new Image()).src = "http://isdspeed.qq.com/cgi-bin/r.cgi?flag1=7839&flag2=7&flag3=8&16=1000&r=" + Math.random());
         $(function(){
             $('.home-follow').click(function(e){
                 e.preventDefault();
