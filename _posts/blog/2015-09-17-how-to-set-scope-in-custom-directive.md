@@ -4,6 +4,8 @@ title: 如何在directive正确设置scope的值
 description: 自定义directive设置scope上的值后，必须调用scope.$apply()才能更新到view上
 category: blog
 ---
+<img class="rich_media_thumb" id="js_cover" onerror="this.parentNode.removeChild(this)" data-s="300,640" src="http://mmbiz.qpic.cn/mmbiz/ow5rEn8QGlFrDhBcoeBWOicjiccFYnWkQ9BQx9aUmuNdCDJYosv77MNXezkiaQkeb68MKO5pDuHspIyS58FRKdIRQ/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5">
+
 不知道大家有没有尝试过在自定义的directive更新scope上的值。如果有，你肯定遇到过这个坑。
 下面我们来看如下这个实例。
 
