@@ -4,9 +4,6 @@
     <!--
     * Author:         HuangYan
     -->
-    <div id='wx_pic' style='margin:0 auto;display:none;'>
-        <img src='/image/data/pic300.jpg' />
-    </div>
     <meta charset="utf-8" />
     <title>如何在directive正确设置scope的值 | HuangYan</title>
     <meta name="author" content="HuangYan" />
@@ -157,8 +154,6 @@
 
 
     <script type="text/javascript">
-        var write_sceen_time = (+new Date());
-        (sampling) && ((new Image()).src = "http://isdspeed.qq.com/cgi-bin/r.cgi?flag1=7839&flag2=7&flag3=8&16=1000&r=" + Math.random());
         $(function(){
             $('.home-follow').click(function(e){
                 e.preventDefault();
@@ -171,5 +166,67 @@
             });
         })
     </script>
+    <script type="text/javascript">
+        (function() {
+        var JSAPI = {
+            ready: function(onBridgeReady) {
+                if (typeof top.window.WeixinJSBridge == 'undefined' || !top.window.WeixinJSBridge.invoke) {
+                    if (top.window.document.addEventListener) {
+                        top.window.document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                    } else if (top.window.document.attachEvent) {
+                        top.window.document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+                        top.window.document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                    }
+                } else {
+                    onBridgeReady();
+                }
+            },
+            on: function(eventName, callback) {
+                top.window.WeixinJSBridge.on(eventName, callback);
+            }
+        };
+        var onA8KeyReady = function(A8KeyUrl) {
+            if (A8KeyUrl) {
+                var params = getQueryFromURL(A8KeyUrl);
+                window.uin = params['uin'] || window.uin;
+                window.key = params['key'] || window.key;
+                window.pass_ticket = params['pass_ticket'] || window.pass_ticket;
+            }
+            seajs.use('appmsg/index.js');
+        };
+        var bridgeReadyTimer;
+        var onBridgeReady = function() {
+            window.logs.pagetime['jsapi_ready_time'] = (+new Date());
+            if (bridgeReadyTimer) {
+                clearTimeout(bridgeReadyTimer);
+            }
+            if (!window.isWeixinCached) {
+                                window.logs['is_page_cached'] = 0;
+                onA8KeyReady();
+            } else if (window.getA8KeyUrl) {
+                                window.logs.pagetime['a8key_ready_time'] = (+new Date());
+                onA8KeyReady(window.getA8KeyUrl);
+            } else {
+                                JSAPI.on('onGetA8KeyUrl', function(res) {
+                    window.logs.pagetime['a8key_ready_time'] = (+new Date());
+                    onA8KeyReady(res.url);
+                });
+            }
+        };
+
+                if (typeof window.pass_ticket !== 'undefined' && !!window.pass_ticket) {
+                        onA8KeyReady();
+        } else if (window.isInWeixinApp() == false) {
+                        onA8KeyReady();
+        } else {
+                        window.logs['is_page_cached'] = 1;
+            JSAPI.ready(onBridgeReady);
+                        bridgeReadyTimer = setTimeout(function() {
+                window.logs['jsapi_ready_fail'] = 1000;
+                onA8KeyReady();
+            }, 2000);
+        }
+    })();
+  </script>
 </body>
 </html>
