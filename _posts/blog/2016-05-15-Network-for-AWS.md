@@ -115,46 +115,46 @@ Amazon VPC 提供了安全组（security groups）和网络访问控制列表（
 ![网络访问控制列表](/images/githubpages/vpc_example.png)
 
 ##网络间的互连
-关于网路间的互连，VPC可以不仅可以连接到Internet还可以连接到数据中心或其他的VPC。下面我们来看看VPC是怎么跟它们交互的。
+关于网络间的互连，VPC可以不仅可以连接到Internet还可以连接到数据中心或其他的VPC。下面我们来看看VPC是怎么跟它们交互的。
 
-#### VPC网络连接到Internet
+#### 1. VPC网络连接到Internet
 
-（1）VPC的公有子网可直接直接连接到Internet
+(a) VPC的公有子网可直接直接连接到Internet
  
-（2）私有子网通过网络地址转换连接到Internet
+(b) 私有子网通过网络地址转换连接到Internet
 
-#### VPC之间的互连
+#### 2. VPC之间的互连
  
-（1）同一个VPC下的子网络之间的互连
+(a) 同一个VPC下的子网络之间的互连
   同一个VPC下的子网络本身默认就是可以互相访问的，用户只需要对ACL和Security Group进行访问控制即可；
 
-（2）同一个Region下的VPC之间的互连
+(b) 同一个Region下的VPC之间的互连
 
 ![网络访问控制列表](/images/githubpages/vpc_peering.png)
 
 同一个Region下VPC之间的VPC之间的互连主要通过VPC Peering（VPC对等）来实现的。
 VPC对等连接是连个VPC之间的网络连接，通过此连接，两个VPC的实例可以彼此通信，就像在同一网络中一样。
 
-a. 在同一账户中创建VPC的对等连接
-b. 与其他AWS账号中的VPC对等连接
+* 在同一账户中创建VPC的对等连接
+* 与其他AWS账号中的VPC对等连接
 
 在AWS中的VPC->Peering Connnections下可以设置，具体流程如下：
 
 创建对等连接（发出等等连接请求）  ->  接受对等连接  -> 为VPC对等连接更新路由表 -> 更新安全组以引用对等的VPC安全组
 
-（3）不同Region下VPC之间的互连
+(c) 不同Region下VPC之间的互连
 不同Region下VPC的连接主要是通过各自VPC公共网络中配置VPN来实现IPSec连接。
 
 ![VPC与本地数据中心的互连](/images/githubpages/different_region_vpc_connect.png)
 
-#### AWS VPC与本地数据中心网络之间的互连
+#### 3. AWS VPC与本地数据中心网络之间的互连
 VPC与数据中心的连接也是通过VPN的IPSEC联系起来，在VPC的VPN Connection中配置Virtual Private Gateway。公司的数据中心配置Customer Getway。
 
 如图所示：
 
 ![VPC与本地数据中心的互连](/images/githubpages/vpc-to-datacenter.png)
 
-#### VPC与其他AWS服务之间的互连，目前只支持S3
+#### 4. VPC与其他AWS服务之间的互连，目前只支持S3
 	
 想要知道VPC与其他AWS服务之间是怎么互连的就不得不提到VPC终端节点。
 

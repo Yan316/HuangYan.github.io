@@ -16,10 +16,11 @@ iframe{display:block;}
 abbr,acronym{border:0;font-variant:normal;}
 del{text-decoration:line-through;}
 address,caption,cite,code,dfn,em,th,var {font-style:normal;font-weight:500;}
-table td,th{border: 1px solid black;padding: 10px;}
+table td,th{border: 1px solid black;padding: 10px; text-align: center;}
+table th { background-color: rgba(13, 71, 77, 0.98);color: white;}
 ol,ul {list-style:none;}p
 caption,th{text-align:left;}
-h1,h2,h3,h4,h5,h6{font-weight:500;}
+h1,h2,h3,h4,h5,h6{font-weight:500; color: rgba(13, 71, 77, 0.98);}
 h1 { font-size: 24px;} 
 h2 { font-size: 22px;} 
 h3 { font-size: 18px;} 
