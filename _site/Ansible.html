@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--
+    * Author:         HuangYan
+    -->
+    <div id='wx_pic' style='margin:0 auto;display:none;'>
+        <img src='/pic300.jpeg'  style="width: 300px; height: 300px;" />
+    </div>
+    <meta charset="utf-8" />
+    <title>自动化工具－Ansible | HuangYan</title>
+    <meta name="author" content="HuangYan" />
+    <meta name="renderer" content="webkit">
+    <meta name="description" content="HuangYan's Blog" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="/css/default.css" type="text/css" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/atom.xml" />
+    <script src="/js/jquery-1.7.1.min.js" type="text/javascript"></script>
+</head>
+<body>
+
+    <div class="home-menu">
+        <div class="home-icon-con">
+            <a class="home-menu-icon" href="/">HuangYan</a>
+            <a class="home-follow" href="#" title="Contact Me">+</a>
+        </div>
+        <div class="home-contact">
+            <a href="http://weibo.com/u/1798401165" target="_blank" style="margin-left:-5px;"><img src="http://www.weibo.com/favicon.ico" alt="" width="25"/></a>
+            <a href="http://www.douban.com/people/11059303/" target="_blank" style="text-align:center;"><img src="http://www.douban.com/favicon.ico" alt="" width="22"/></a>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="/js/prettify/prettify.css" />
+<style type="text/css">
+    body { background:#e8e8e8; }
+    @media screen and (max-width: 750px){
+        body { background:#fff; }
+    }
+    @media screen and (max-width: 1020px){
+        body { background:#fff; }
+    }
+</style>
+
+<div id="content">
+    <div class="entry">
+        <h1 class="entry-title"><a href="/Ansible" title="自动化工具－Ansible">自动化工具－Ansible</a></h1>
+        <p class="entry-date">2016-06-23</p>
+        <h3>什么是Ansible</h3>
+
+<p>官方文档解释Ansible饰一个简单的自动化工具。这个工具主要可以帮助完成以下四个功能：</p>
+
+<pre><code>＊ 自动化部署APP
+
+＊ 自动化管理配置项
+
+＊ 自动化的持续交付
+
+＊ 自动化（AWS）的云服务管理 
+</code></pre>
+
+<p>简单的说Ansible就是批量的在远程服务器上执行一些命令来自动化的完成一些功能。
+Ansible是一个纯Python实现的ssh协议库。因为是基于ssh来喝远程主机通讯的，所以无需在主机上安装client／agents。</p>
+
+<h3>与其他常用的自动化配置管理工具对比</h3>
+
+<table>
+<thead>
+<tr>
+<th> 工具名称 </th>
+<th style="text-align:center;"> DSL </th>
+<th style="text-align:right;"> 特点 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Ansible </td>
+<td style="text-align:center;"> YAML </td>
+<td style="text-align:right;"> Python，可维护行较高，架构简单，Windows平台支持比较弱 </td>
+</tr>
+<tr>
+<td> SaltStack </td>
+<td style="text-align:center;"> SLS格式文件，支持YAML </td>
+<td style="text-align:right;"> Python，简单快速灵活，对Windows平台支持有限，大规模多功能支持欠缺 </td>
+</tr>
+<tr>
+<td> Chef </td>
+<td style="text-align:center;"> Ruby-based DSL </td>
+<td style="text-align:right;"> Ruby，成熟度高，学习曲线较陡 </td>
+</tr>
+<tr>
+<td> Puppet </td>
+<td style="text-align:center;"> Ruby-based DSL </td>
+<td style="text-align:right;"> Ruby，成熟度高，学习曲线较陡 </td>
+</tr>
+</tbody>
+</table>
+
+
+<h3>使用安装要求</h3>
+
+<p>控制服务器（Master）需要安装Python2.6/7，。Red Hat, Debian, CentOS, OS X, BSD的各种版本都可。</p>
+
+<p>从1.7版本开始,Ansible也开始支持Windows机器的管理.不过是通过本机的PowerShell来实现远程管理,而不是SSH.</p>
+
+<p>被管理的服务器（Managed Node）需要安装Python2.4以上的版本，如果低于2.5，需要安装python-simplejson。</p>
+
+<h3>Inventroy</h3>
+
+<p>Ansible主要是批量的在远程服务器执行一些命令控制主机。可以同时操作属于一个组的多台主机。那怎么知道哪些是受控的主机呢？</p>
+
+<p>Ansible为我们提供了Inventory文件来指定受控资源列表，也就是主机列表。通过inventory文件配置组和主机之间的关系。</p>
+
+<h5>实例</h5>
+
+<pre><code>    mail.example.com
+
+    [webservers]
+    for.example.com
+    bar.example.com:8080
+
+    [dbservers]
+    one.example.com
+    two.example.com
+
+    [atlanta]
+    host1 http_port=80 maxRequestsPerChild=808
+    host2 http_port=303 maxRequestsPerChild=909
+</code></pre>
+
+<p>从上面的实例来看，我们可以看到：</p>
+
+<ol type="a">
+<li>Inventory的基本格式如windows的ini文件。</li>
+<li>默认的端口号是22，如果不是默认端口，可以通过如bar.example.com:8080这样的格式来设置。</li>
+<li>如第三组atlanta一样，在Inventory的配置文件中设置可以在主机变量或组变量，但这些变量playbooks中使用，不能给/user/bin/ansible使用。</li>
+</ol>
+
+
+<h4>Pattern</h4>
+
+<p>Pattern是指怎样确定由哪一台主机来管理，与哪台主机进行交互。 一个Pattern通常关联到一系列的组。</p>
+
+<table>
+<thead>
+<tr>
+<th> 符号 </th>
+<th style="text-align:center;"> 功能 </th>
+<th style="text-align:center;"> 实例 </th>
+<th style="text-align:center;"> 描述 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> * (all)</td>
+<td style="text-align:center;"> 全部 </td>
+<td style="text-align:center;"> all </td>
+<td style="text-align:center;"> Inventory中的所有主机 </td>
+</tr>
+<tr>
+<td> : </td>
+<td style="text-align:center;"> 或 </td>
+<td style="text-align:center;"> webservers:dbservers </td>
+<td style="text-align:center;"> 在webservers或者在dbservers组中的主机 </td>
+</tr>
+<tr>
+<td> ! </td>
+<td style="text-align:center;"> 非 </td>
+<td style="text-align:center;"> webservers:!phoenix </td>
+<td style="text-align:center;"> 属于webservers但不隶属于phoneix组的主机 </td>
+</tr>
+<tr>
+<td> &amp; </td>
+<td style="text-align:center;"> 且 </td>
+<td style="text-align:center;"> webservers:&amp;phoenix </td>
+<td style="text-align:center;"> 属于webservers且隶属于phoneix组的主机 </td>
+</tr>
+<tr>
+<td> [i-n] </td>
+<td style="text-align:center;"> 第n个主机/第i到n个主机 </td>
+<td style="text-align:center;"> webservers[5]/webservers[5-20] </td>
+<td style="text-align:center;"> 属于webservers组的第五个主机/第5到20台主机 </td>
+</tr>
+<tr>
+<td> ~ </td>
+<td style="text-align:center;"> 正则表达式 </td>
+<td style="text-align:center;"> ~(web).*.example.com </td>
+<td style="text-align:center;"> 属于webservers且满足.example.com格式的主机 </td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>支持的模块</h4>
+
+<p>ansible支持很多模块，通过模块来执行任务。</p>
+
+<p>默认是’command’-命令模块。其他模块可以通过-m选项来指定不同的模块。</p>
+
+<table>
+<thead>
+<tr>
+<th> 符号 </th>
+<th style="text-align:center;"> 功能 </th>
+<th style="text-align:center;"> 实例 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> shell模块 </td>
+<td style="text-align:center;"> 运行shell命令</td>
+<td style="text-align:center;">   -m shell </td>
+</tr>
+<tr>
+<td> File模块 </td>
+<td style="text-align:center;">   用于远程主机上的文件操作 </td>
+<td style="text-align:center;">  -m file / -m copy </td>
+</tr>
+<tr>
+<td> apt/yum 模块 </td>
+<td style="text-align:center;"> 包管理器管理包 </td>
+<td style="text-align:center;"> -m yum/apt </td>
+</tr>
+<tr>
+<td> user模块 </td>
+<td style="text-align:center;"> 创建、删除、管理现有账户 </td>
+<td style="text-align:center;"> -m user </td>
+</tr>
+<tr>
+<td> service模块 </td>
+<td style="text-align:center;"> 用于管理服务 </td>
+<td style="text-align:center;"> -m service </td>
+</tr>
+<tr>
+<td> git模块 </td>
+<td style="text-align:center;"> 部署webapp </td>
+<td style="text-align:center;"> -m git </td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>ad-hoc命令和Ansible playbook</h4>
+
+<p>Ansible为我们提供两种方式去执行完成自动化任务：ad－hoc命令和Ansible Playbook。</p>
+
+<h5>ad-hoc命令</h5>
+
+<p>ad-hoc是指我们敲一些命令比较快的完成一些事情，而不需要将这些命令保存下来。</p>
+
+<p>例如</p>
+
+<pre><code>    ansible atlanta -a "/sbin/reboot" -f 10
+</code></pre>
+
+<p>此条命令是将/sbin/reboot命令在atlanta组中的的所有主机执行10次（重启10次）</p>
+
+<h4>Playbook</h4>
+
+<p>Playbook主要通过Yaml的格式来完成的。</p>
+
+<pre><code>    ----
+    - hosts: webservers
+      remote_user: yourname
+      sudo: yes
+      sudo_user: postgres
+      vars: 
+        key_file: /etc/nginx/ssl/nginx.key
+        cer_file: /etc/nginx/ssl/nginx.crt
+        conf_file: /etc/nginx/sites-available/default
+</code></pre>
+
+<p>hosts是一个或多个主机patterns。
+remote_user是在用户主机上的账户名
+sudo是通过超级用户权限root执行命令，也可在每个Task定义此属性
+vars定义变量，变量可以通过进行使用。</p>
+
+<h5>Task</h5>
+
+<p>Task是Ansible的最小执行单元，它会领相应的Module来执行对应的任务。</p>
+
+<h5>Module - Task plugins or Library plugins</h5>
+
+<p>具体任务的执行单元。它是幂等性的，意思是如果再一次执行modules，只会执行必要的改动，只会改变需要改变的地方</p>
+
+<p><img src="/images/githubpages/playbook.png" alt="Playbook" /></p>
+
+<p>上图表明了 Playbook与Play，Task， Module， Host的关系</p>
+
+<ol>
+<li>一个Playbook可以包含一个或多个Play，</li>
+<li>一个Play包含一个Task列表。</li>
+<li>一个Task在其所对应的所有主机（host pattern匹配的所有主机）上执行完毕之后，才执行下一个task。</li>
+<li>一个Task关联一个确切的Module。</li>
+</ol>
+
+
+<h5>handlers</h5>
+
+<p>handlers是一种条件表单，它和task类似只不过运行handlers必须要通过一个task通知。</p>
+
+<p>handles的定义如下所示：</p>
+
+<pre><code>    handles:
+        - name: restart nginx
+        service: name=nginx state=restarted
+</code></pre>
+
+<p>handle被通知（notify）才会被执行。如下所示：</p>
+
+<pre><code>    name: copy TLS key
+    copy: src=files/nginx.key dest= owner=root mode=0600
+    notify: restart nginx
+</code></pre>
+
+<p>copy TLS key task 在完成copy任务后重启nginx。</p>
+
+<p>除此之外，Handlers具有以下几个特点：</p>
+
+<ol type="a">
+<li>Handlers是在所有tasks运行了才运行。</li>
+<li>不管通知多少次，只运行一次</li>
+<li>运行顺序是根据在play中定义的顺序，而不是通知的顺序</li>
+</ol>
+
+
+<h5>条件选择</h5>
+
+<p>在满足某个条件的情况下，我们才会执行某个Task。这时候我们就会用到条件选择语句“When”。</p>
+
+<pre><code>tasks:
+  - command: echo 
+     with_items: [ 0, 2, 4, 6, 8, 10 ]
+     when: item &gt; 5
+</code></pre>
+
+<p> 该tasks有且仅当item的数值大于5的时候才会输出item。</p>
+
+<h5>循环</h5>
+
+<p> 通常想要重复的做某一个事情直到收到某个特定的结果，我们就需要使用循环。</p>
+
+<p> 标准循环（with_items）</p>
+
+<pre><code>- name: add several users
+  user: name= state=present groups=wheel
+  with_items:
+    - testuser1
+    - testuser2
+</code></pre>
+
+<p> 除了标准循环以外我们还包括嵌套循环（with_nested）、对哈希表使用循环(with_dict)、对文件列表使用循环(with_fileglob)等</p>
+
+<h4>重构－Roles</h4>
+
+<p>Roles-在Ansible中起到的宗旨是把配置文件整合到一起并最大程度保证其干净整洁，可重用。
+Playbooks可以引用其它playbook文件中的命令条目。当所有文件均读取完毕后，所有的命令条目被插入到一个playbook钟组合成一个厂的命令列表。</p>
+
+<p><img src="/images/githubpages/playbook-roles.png" alt="Playbook-Roles" /></p>
+
+    </div>
+
+    <div class="sidenav">
+        <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1798401165&verifier=a4cff2e8&dpc=1"></iframe>
+    </div>
+
+    <div class="sidenav">
+        <h2>Blog</h2>
+        <ul class="artical-list">
+        
+            <li><a href="/Ansible">自动化工具－Ansible</a></li>
+        
+            <li><a href="/Network-for-AWS">AWS相关的网络知识</a></li>
+        
+            <li><a href="/base-knowledge-for-linux">Linux操作系统下，文件系统的那些知识</a></li>
+        
+            <li><a href="/how-to-set-scope-in-custom-directive">如何在directive正确设置scope的值</a></li>
+        
+            <li><a href="/scope-in-angularJs">关于AngularJs的作用域</a></li>
+        
+        </ul>
+
+        <h2>Opinion</h2>
+        <ul class="artical-list">
+        
+        </ul>
+
+        <h2>Project</h2>
+        <ul class="artical-list">
+        
+        </ul>
+    </div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+
+    <script type="text/javascript">
+        $(function(){
+            $('.home-follow').click(function(e){
+                e.preventDefault();
+
+                if($('.home-contact').is(':visible')){
+                    $('.home-contact').slideUp(100);
+                }else{
+                    $('.home-contact').slideDown(100);
+                }
+            });
+        })
+    </script>
+    <script type="text/javascript">
+        (function() {
+        var JSAPI = {
+            ready: function(onBridgeReady) {
+                if (typeof top.window.WeixinJSBridge == 'undefined' || !top.window.WeixinJSBridge.invoke) {
+                    if (top.window.document.addEventListener) {
+                        top.window.document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                    } else if (top.window.document.attachEvent) {
+                        top.window.document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+                        top.window.document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                    }
+                } else {
+                    onBridgeReady();
+                }
+            },
+            on: function(eventName, callback) {
+                top.window.WeixinJSBridge.on(eventName, callback);
+            }
+        };
+        var onA8KeyReady = function(A8KeyUrl) {
+            if (A8KeyUrl) {
+                var params = getQueryFromURL(A8KeyUrl);
+                window.uin = params['uin'] || window.uin;
+                window.key = params['key'] || window.key;
+                window.pass_ticket = params['pass_ticket'] || window.pass_ticket;
+            }
+            seajs.use('appmsg/index.js');
+        };
+        var bridgeReadyTimer;
+        var onBridgeReady = function() {
+            window.logs.pagetime['jsapi_ready_time'] = (+new Date());
+            if (bridgeReadyTimer) {
+                clearTimeout(bridgeReadyTimer);
+            }
+            if (!window.isWeixinCached) {
+                                window.logs['is_page_cached'] = 0;
+                onA8KeyReady();
+            } else if (window.getA8KeyUrl) {
+                                window.logs.pagetime['a8key_ready_time'] = (+new Date());
+                onA8KeyReady(window.getA8KeyUrl);
+            } else {
+                                JSAPI.on('onGetA8KeyUrl', function(res) {
+                    window.logs.pagetime['a8key_ready_time'] = (+new Date());
+                    onA8KeyReady(res.url);
+                });
+            }
+        };
+
+                if (typeof window.pass_ticket !== 'undefined' && !!window.pass_ticket) {
+                        onA8KeyReady();
+        } else if (window.isInWeixinApp() == false) {
+                        onA8KeyReady();
+        } else {
+                        window.logs['is_page_cached'] = 1;
+            JSAPI.ready(onBridgeReady);
+                        bridgeReadyTimer = setTimeout(function() {
+                window.logs['jsapi_ready_fail'] = 1000;
+                onA8KeyReady();
+            }, 2000);
+        }
+    })();
+  </script>
+</body>
+</html>
