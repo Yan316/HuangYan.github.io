@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--
+    * Author:         HuangYan
+    -->
+    <div id='wx_pic' style='margin:0 auto;display:none;'>
+        <img src='/pic300.jpeg'  style="width: 300px; height: 300px;" />
+    </div>
+    <meta charset="utf-8" />
+    <title>SSH | HuangYan</title>
+    <meta name="author" content="HuangYan" />
+    <meta name="renderer" content="webkit">
+    <meta name="description" content="HuangYan's Blog" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="/css/default.css" type="text/css" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/atom.xml" />
+    <script src="/js/jquery-1.7.1.min.js" type="text/javascript"></script>
+</head>
+<body>
+
+    <div class="home-menu">
+        <div class="home-icon-con">
+            <a class="home-menu-icon" href="/">HuangYan</a>
+            <a class="home-follow" href="#" title="Contact Me">+</a>
+        </div>
+        <div class="home-contact">
+            <a href="http://weibo.com/u/1798401165" target="_blank" style="margin-left:-5px;"><img src="http://www.weibo.com/favicon.ico" alt="" width="25"/></a>
+            <a href="http://www.douban.com/people/11059303/" target="_blank" style="text-align:center;"><img src="http://www.douban.com/favicon.ico" alt="" width="22"/></a>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="/js/prettify/prettify.css" />
+<style type="text/css">
+    body { background:#e8e8e8; }
+    @media screen and (max-width: 750px){
+        body { background:#fff; }
+    }
+    @media screen and (max-width: 1020px){
+        body { background:#fff; }
+    }
+</style>
+
+<div id="content">
+    <div class="entry">
+        <h1 class="entry-title"><a href="/SSH" title="SSH">SSH</a></h1>
+        <p class="entry-date">2016-06-28</p>
+        <h3>SSH的概念</h3>
+
+<p>SSH是什么？SSH的全称是Security Shell。是一个允许两台电脑之间通过安全的连接进行数据交换的网络加密协议。大家知道通过加密的方式可以保证数据的保密性和完整性。SSH协议族可以用来进行远程控制，或在计算机之间传送文件。</p>
+
+<p>SSH的主要目的是用来取代传统的telnet和R系列命令（rlogin,rsh,rexec等）远程登陆和远程执行命令的工具，实现对远程登陆和远程执行命令加密。防止由于网络监听而出现的密码泄漏，对系统构成威胁。</p>
+
+<p>SSH采用公钥加密技术来验证远程主机，以及必要时允许主机验证用户。</p>
+
+<h3>SSH与OpenSSH的关系</h3>
+
+<p>OpenSSH是SSH协议的免费开源实现。与OpenSSL不同，他们由不同的开发团队开发，出于不同的开发目的开发出来。</p>
+
+<p>OpenSSH提供了一系列的套件工具：</p>
+
+<ol>
+<li>通过ssh,sip和sftp进行远程操作</li>
+<li>通过ssh-add, ssh-keysign, ssh-keyscan 和ssh-keygen对Key进行管理</li>
+<li>服务方由sshd，sftp-server和ssh-agent构成。</li>
+</ol>
+
+
+<h3>SSH的基本用法</h3>
+
+<p>SSH远程登录的基本用法是</p>
+
+<p><strong>ssh user@host</strong></p>
+
+<p>如果本地用户名和远程用户名一样，可直接用</p>
+
+<p> <strong>ssh host</strong></p>
+
+<p>SSH使用TCP/IP传输机制，TCP在服务器端使用22的端口。所以SSH的默认监听端口号是22.端口不是22时，可配置端口号</p>
+
+<p><strong>ssh -p port user@server-address</strong></p>
+
+<h3>SSH登录主要有两种方式：口令登录和公钥登录。</h3>
+
+<h4>1. 口令登录</h4>
+
+<p>   口令登录即是通过用户名和密码对主机进行远程登录。通过此方法每次登录都会要求输入密码。</p>
+
+<p>   如果是第一次登录对方主机，系统会出现下面提示。(此实例是登录vagrant box）</p>
+
+<p><img src="/images/githubpages/ssh-password-login.png" alt="login-by-password" /></p>
+
+<p>   此提示信息表明，无法认证远程连接主机，RSA key fingerprint是公钥指纹。询问你是否还要继续连接。</p>
+
+<p>   RSA公钥很长，所以对其进行了MD5计算，将它变成了一个128的指纹。方便比较是否正确。</p>
+
+<p>   很自然的问题是无法确认远程主机的公钥值是多少？这就要求远程主机在自己的网站上贴出公钥指纹，以便用户自行核对。</p>
+
+<p><strong>回答Yes，就表明远程主机的公钥已经被接受了，公钥会被保存在.ssh/known_hosts中。每个SSH的用户都有自己known_hosts文件，该文件记录着一些被信任的远程主机的公钥。</strong></p>
+
+<p>紧接着，会让你输入登录密码，具体如下所示</p>
+
+<p><img src="/images/githubpages/ssh-know-hosts.png" alt="knowhost" /></p>
+
+<p>（备注：vagrant box默认用户名是vagrant， 默认密码是vagrant）</p>
+
+<p>如果密码正确，就可以登录。再次远程登录时，就会跳过警告部分，直接要求输入密码。</p>
+
+<h4>2. 公钥登录</h4>
+
+<p>原理：用户将自己的公钥存储到远程主机上（ssh/authorized_keys），登录的时候，远程主机会像用户发送一段随机字符串，用户用自己的私钥加密后，再发回来。远程主机用事先储存的公钥（~/.ssh/authorized_keys）解密，如果成功，就证明用户是可信的，下次可直接允许登录shell，不在要求密码。</p>
+
+<p>现在的问题是如何拷贝公钥，目前有三种方式：</p>
+
+<p><strong>（1）使用ssh-copy-id </strong></p>
+
+<ol type="a">
+<li> 安装ssh-copy-id, 可以通过brew进行安装。
+ 具体指令：brew install ssh-copy-id</li>
+<li> 拷贝主机公钥到远程主机的ssh/authorized_key下。
+ 具体指令：ssh-copy-id user@host</li>
+</ol>
+
+
+<p>执行完成会要求被登录密码，写入本机公钥到远程主机的ssh/authorized_keys文件中。同时由于在此过程中进行了口令登录，在拷贝公钥。所以远程公钥也会保存在本地~/.ssh/known_hosts文件中。
+下次再登录的时候，就不会要求输入password 。</p>
+
+<p><strong>（2）shell 命令拷贝本地公钥 </strong></p>
+
+<p>ssh user@host 'mkdir -p .ssh &amp;&amp; cat >> .ssh/authorized_keys' &lt; ~/.ssh/id_rsa.pub
+SSH客户端的而配置文件是/etc/ssh/ssh_config或~/.ssh/config</p>
+
+<p>这条命令由多个语句组成，依次分解开来看：a. "$ ssh user@host"，表示登录远程主机；b. 单引号中的mkdir .ssh &amp;&amp; cat >> .ssh/authorized_keys，表示登录后在远程shell上执行的命令：c. "$ mkdir -p .ssh"的作用是，如果用户主目录中的.ssh目录不存在，就创建一个；d. 'cat >> .ssh/authorized_keys' &lt; ~/.ssh/id_rsa.pub的作用是，将本地的公钥文件~/.ssh/id_rsa.pub，重定向追加到远程文件authorized_keys的末尾。</p>
+
+<p>执行此命令后，同样提示要求输入登录密码，才能成功将本地公钥写入远程主机的~/.ssh/authorized_keys文件中。</p>
+
+<p><strong>（3）手动拷贝 </strong></p>
+
+<p>   口令登录远程主机后，将本地id_rsa.pub文件的内容，复制拷贝写入远程主机的~/.ssh/authorized_keys文件中。</p>
+
+<h3>SSH的配置文件</h3>
+
+<p><strong>（1）配置登录信息 </strong></p>
+
+<p>如果你想登陆到一台远程主机的时候，至少需要输入主机名和IP地址。为了减少重复工作，可以在本地的$HOME/.ssh/config或者全局的/etc/ssh/ssh_config</p>
+
+<pre><code>    HOST vagrant
+        HostName 192.168.33.12
+        Port 1234
+        User vagrant
+        IdentityFile ~/.ssh/id_rsa
+
+    HOST aws
+        HostName ec2-52-23-170-155.compute-1.amazonaws.com
+        User ubuntu
+        IdentityFile ~/.ssh/aws.pem
+</code></pre>
+
+<p>其中HostName表示远程连接的主机IP地址。
+Port表示的是端口号
+User表示主机名
+IdentityFile 表示私钥地址。</p>
+
+<p>所以之前的连接命令如ssh -p 1234 vagrant@192.168.33.12 即简化成 ssh vagrant</p>
+
+<p><strong> （2）保持会话 </strong></p>
+
+<p>如果会话空闲，则会自动退出。为了保持会话，可以在配置文件$HOME/.ssh/config或者全局的/etc/ssh/ssh_config中添加</p>
+
+<p>Host *
+        ServerAliveInterval 15</p>
+
+<p>表示每15秒客户端发送一个“alive”的信号到服务器。</p>
+
+<p>为了保持本地会话，在服务器端设置
+ClientAliveInterval 120</p>
+
+<h3>通过SSH本地端口转发</h3>
+
+<p>假定host1是本地主机，host2是远程主机。由于种种原因，这两台主机之间无法连通。但是，另外还有一台host3，可以同时连通前面两台主机。因此，很自然的想法就是，通过host3，将host1连上host2。</p>
+
+<p>ssh -L 2121:host2:21 host3
+-L参数“本地端口:目标主机:目标主机端口”
+host3将本地所有2121的端口发送的所有的数据都转发给host2的21端口上</p>
+
+    </div>
+
+    <div class="sidenav">
+        <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1798401165&verifier=a4cff2e8&dpc=1"></iframe>
+    </div>
+
+    <div class="sidenav">
+        <h2>Blog</h2>
+        <ul class="artical-list">
+        
+            <li><a href="/SSH">SSH</a></li>
+        
+            <li><a href="/Ansible">自动化工具－Ansible</a></li>
+        
+            <li><a href="/Network-for-AWS">AWS相关的网络知识</a></li>
+        
+            <li><a href="/base-knowledge-for-linux">Linux操作系统下，文件系统的那些知识</a></li>
+        
+            <li><a href="/how-to-set-scope-in-custom-directive">如何在directive正确设置scope的值</a></li>
+        
+            <li><a href="/scope-in-angularJs">关于AngularJs的作用域</a></li>
+        
+        </ul>
+
+        <h2>Opinion</h2>
+        <ul class="artical-list">
+        
+        </ul>
+
+        <h2>Project</h2>
+        <ul class="artical-list">
+        
+        </ul>
+    </div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+
+    <script type="text/javascript">
+        $(function(){
+            $('.home-follow').click(function(e){
+                e.preventDefault();
+
+                if($('.home-contact').is(':visible')){
+                    $('.home-contact').slideUp(100);
+                }else{
+                    $('.home-contact').slideDown(100);
+                }
+            });
+        })
+    </script>
+    <script type="text/javascript">
+        (function() {
+        var JSAPI = {
+            ready: function(onBridgeReady) {
+                if (typeof top.window.WeixinJSBridge == 'undefined' || !top.window.WeixinJSBridge.invoke) {
+                    if (top.window.document.addEventListener) {
+                        top.window.document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                    } else if (top.window.document.attachEvent) {
+                        top.window.document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+                        top.window.document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                    }
+                } else {
+                    onBridgeReady();
+                }
+            },
+            on: function(eventName, callback) {
+                top.window.WeixinJSBridge.on(eventName, callback);
+            }
+        };
+        var onA8KeyReady = function(A8KeyUrl) {
+            if (A8KeyUrl) {
+                var params = getQueryFromURL(A8KeyUrl);
+                window.uin = params['uin'] || window.uin;
+                window.key = params['key'] || window.key;
+                window.pass_ticket = params['pass_ticket'] || window.pass_ticket;
+            }
+            seajs.use('appmsg/index.js');
+        };
+        var bridgeReadyTimer;
+        var onBridgeReady = function() {
+            window.logs.pagetime['jsapi_ready_time'] = (+new Date());
+            if (bridgeReadyTimer) {
+                clearTimeout(bridgeReadyTimer);
+            }
+            if (!window.isWeixinCached) {
+                                window.logs['is_page_cached'] = 0;
+                onA8KeyReady();
+            } else if (window.getA8KeyUrl) {
+                                window.logs.pagetime['a8key_ready_time'] = (+new Date());
+                onA8KeyReady(window.getA8KeyUrl);
+            } else {
+                                JSAPI.on('onGetA8KeyUrl', function(res) {
+                    window.logs.pagetime['a8key_ready_time'] = (+new Date());
+                    onA8KeyReady(res.url);
+                });
+            }
+        };
+
+                if (typeof window.pass_ticket !== 'undefined' && !!window.pass_ticket) {
+                        onA8KeyReady();
+        } else if (window.isInWeixinApp() == false) {
+                        onA8KeyReady();
+        } else {
+                        window.logs['is_page_cached'] = 1;
+            JSAPI.ready(onBridgeReady);
+                        bridgeReadyTimer = setTimeout(function() {
+                window.logs['jsapi_ready_fail'] = 1000;
+                onA8KeyReady();
+            }, 2000);
+        }
+    })();
+  </script>
+</body>
+</html>
