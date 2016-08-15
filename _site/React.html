@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--
+    * Author:         HuangYan
+    -->
+    <div id='wx_pic' style='margin:0 auto;display:none;'>
+        <img src='/pic300.jpeg'  style="width: 300px; height: 300px;" />
+    </div>
+    <meta charset="utf-8" />
+    <title>React - 初步认识React | HuangYan</title>
+    <meta name="author" content="HuangYan" />
+    <meta name="renderer" content="webkit">
+    <meta name="description" content="HuangYan's Blog" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="/css/default.css" type="text/css" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/atom.xml" />
+    <script src="/js/jquery-1.7.1.min.js" type="text/javascript"></script>
+</head>
+<body>
+
+    <div class="home-menu">
+        <div class="home-icon-con">
+            <a class="home-menu-icon" href="/">HuangYan</a>
+            <a class="home-follow" href="#" title="Contact Me">+</a>
+        </div>
+        <div class="home-contact">
+            <a href="http://weibo.com/u/1798401165" target="_blank" style="margin-left:-5px;"><img src="http://www.weibo.com/favicon.ico" alt="" width="25"/></a>
+            <a href="http://www.douban.com/people/11059303/" target="_blank" style="text-align:center;"><img src="http://www.douban.com/favicon.ico" alt="" width="22"/></a>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="/js/prettify/prettify.css" />
+<style type="text/css">
+    body { background:#e8e8e8; }
+    @media screen and (max-width: 750px){
+        body { background:#fff; }
+    }
+    @media screen and (max-width: 1020px){
+        body { background:#fff; }
+    }
+</style>
+
+<div id="content">
+    <div class="entry">
+        <h1 class="entry-title"><a href="/React" title="React - 初步认识React">React - 初步认识React</a></h1>
+        <p class="entry-date">2016-08-14</p>
+        <h3>React的产生背景</h3>
+
+<p>React是Facebook在2013年6月发布的一个javascript的库。我们在学习一门语言，库，工具的时候我们都需要考虑它产生的背景。</p>
+
+<p>React的产生主要是为了解决大型应用构建数据不断变化的问题。数据变化会引起<strong>大量的DOM操作</strong>和<strong>及其复杂的逻辑</strong>。而React通过采用DOM的自动操作和一定的状态输出一定的内容解决了数据变化引起两大问题。</p>
+
+<h3>目前使用React的公司</h3>
+
+<p>从<a href="https://github.com/facebook/react/wiki/Sites-Using-React">链接</a>可以看到像国外知名的公司Facebook，Yahoo, WhatsApp, Instagram, Docker，Uber等，以及国内的淘宝，Tmall，支付宝等都在使用React。</p>
+
+<h3>React的两大优点？参考(http://www.cnblogs.com/vajoy/p/4591274.html)</h3>
+
+<h4>（1）虚拟DOM</h4>
+
+<p><img src="/images/githubpages/react-virtual-dom.png" alt="虚拟DOM" />
+在DOM树的状态发生变化时，不会立即机型DOM修改，渲染页面。而是将统一Event loop前后的DOM书进行对比（DOM diff），如果两个DOM树不一样的地方标记为“脏状态”，在Event loot结束时计算出对DOM修改的地方和最终的状态，并针对这些地方进行一次性渲染。从而实现了最高效的DOM操作和渲染。</p>
+
+<h4>（2）可嵌套的组件</h4>
+
+<p>在后面我们会介绍什么是组件。简单来说就是一些封装起来，可服用的UI模块。这些组件可以层层嵌套起来使用。</p>
+
+<h3>JSX</h3>
+
+<p>在我们具体去学习React之前，我们首先来看看JSX，REact编写组件的一种语法。</p>
+
+<p>JSX是Javascript XML的缩写，即在Javascript中使用长得很像XML的语言。在编写React中可以不用JSX。</p>
+
+<p>JSX是基于ECMAScript的一种新特性，不是一门语言。一种定义带属性的树结构，不是XML和HTML只是借用XML的形式。</p>
+
+<p>JSX与Javascript的区别是可以在编写React时直接使用HTML标签。但本质上就是Javascript。</p>
+
+<pre><code>    var SuccessLabel = React.createClass({
+            render: function() {
+            return (&lt;div className=“success”&gt;登录成功&lt;/div&gt;);
+         }
+    })
+</code></pre>
+
+<p>原始的javascrpt创建组件：</p>
+
+<pre><code>    React.createClass({
+        return React.createElement('div', {className: "success", "登录成功"})
+    })  
+</code></pre>
+
+<p>JSX的几个特点  ：</p>
+
+<ol>
+<li>自定义组件名首字母大写</li>
+<li>组件可同标签一样可嵌套</li>
+<li>求值表达式 :{}中只能是求值表达式不能是语句如if等, 但可以使用函数表达式
+ <HelloWorld name={this.props.name}></HelloWorld></li>
+<li>htmlfor 和className。html和class是js的保留字，所以改成htmlFor和className</li>
+</ol>
+
+
+<h3>组件</h3>
+
+<p>React的核心是组件。组件的本质是状态机，输入一定时，输出一定。</p>
+
+<p><strong>组件有两个特殊的数据state和props</strong></p>
+
+<h4>props</h4>
+
+<p>props是properties的缩写，即属性。属性主要<strong>通过父组件指定。不能通过组件内部修改属性</strong>。</p>
+
+<p>可通过以下三种方式来设置props：</p>
+
+<ol type="a">
+<li>键值对</li>
+</ol>
+
+
+<p> <img src="/images/githubpages/react-props1.png" alt="props" /></p>
+
+<ol type="a">
+<li><p>展开语法，传入一个属性对象</p>
+
+<p> <img src="/images/githubpages/react-props.png" alt="props" /></p></li>
+<li><p>通过setProps()函数进行设置，因为不能通过组件内部修改属性，所以一般使用前阆中方式在父组件中修改。</p>
+
+<p>var instance = React.react(<HelloWorld></HelloWorld>, document.body);</p>
+
+<p>instance.setProps({name: “Tim”});</p></li>
+</ol>
+
+
+<h4>state</h4>
+
+<p>state即是状态，<strong>由组件自己维护，父组件和子组件不能修改</strong>它的状态。</p>
+
+<p>设置state主要通过下面两个方法：</p>
+
+<p>getInitialState()</p>
+
+<p>setState()，state是一个对象，使用方法如下：this.setState({"inputText": event.target.value})</p>
+
+<h4>state和props的比较</h4>
+
+<h5>* 相似点</h5>
+
+<p> 纯JS对象，都会触发Render更新，都具有确定性。</p>
+
+<h5>* 不同处</h5>
+
+<table>
+<thead>
+<tr>
+<th> - </th>
+<th style="text-align:center;"> 属性 </th>
+<th style="text-align:center;"> 状态 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> 能否从父组件获取初始状态 </td>
+<td style="text-align:center;"> 可以 </td>
+<td style="text-align:center;">  不可以 </td>
+</tr>
+<tr>
+<td> 能否由父组件修改 </td>
+<td style="text-align:center;"> 可以 </td>
+<td style="text-align:center;"> 不可以 </td>
+</tr>
+<tr>
+<td> 能否在组件内部设置默认值 </td>
+<td style="text-align:center;"> 可以 </td>
+<td style="text-align:center;"> 可以 </td>
+</tr>
+<tr>
+<td> 能否在组件内部修改 </td>
+<td style="text-align:center;"> 不可以 </td>
+<td style="text-align:center;"> 可以 </td>
+</tr>
+<tr>
+<td> 能否设置子组件的初始值 </td>
+<td style="text-align:center;"> 可以 </td>
+<td style="text-align:center;"> 不可以 </td>
+</tr>
+<tr>
+<td> 能否修改子组件的值 </td>
+<td style="text-align:center;"> 可以 </td>
+<td style="text-align:center;"> 不可以 </td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>* 如何区别属性和状态</h4>
+
+<p>根据组件在运行时需要修改的数据是状态。否则就是属性。</p>
+
+<h3>组件的三个生命周期</h3>
+
+<h4>（1）初始化阶段</h4>
+
+<p> <strong>getDefaultProps()</strong></p>
+
+<p>  该方法用于初始化实例的属性props，只会被调用一次，在组件的第一个实例被实例化得时候被调动，实例之间共享引用。</p>
+
+<p> <strong>getInitalState()</strong></p>
+
+<p> 该方法用于初始化实例的状态state。每次实例化的时候都会被调用。</p>
+
+<p> <strong>componentWillMount()</strong></p>
+
+<p>  该方法是在render()函数之前调用，是在渲染页面之前最后的一次机会修改状态。通过this.setState()方法。</p>
+
+<p> <strong>render()</strong></p>
+
+<p>  该方法值能访问this.props 和 this.state。只能有一个顶层组件，不运行修改状态和DOM输出。</p>
+
+<p> <strong>componentDidMount()</strong></p>
+
+<h4>（2）运行阶段</h4>
+
+<p> <strong>componentWillReceiveProps()</strong></p>
+
+<p>  当父组件修改子组件属性是，在属性被触发前被调用。</p>
+
+<p> <strong>shouldComponentUpdate()</strong></p>
+
+<p>  当组件接受到新的属性或状态时被触发，当返回为false时，不重新渲染页面。不执行后面的三个方法：componentWillUpdate，render，componentDidUpdate</p>
+
+<p> <strong>componentWillUpdate()</strong></p>
+
+<p>  不能修改属性和状态。</p>
+
+<p> <strong>render()</strong></p>
+
+<p> <strong>componentDidUpdate()</strong></p>
+
+<p>   该方法在已成功渲染并完成真实DOM，可修改DOM。</p>
+
+<h4>（3）销毁阶段</h4>
+
+<p>  <strong>componentWillUnmount()</strong></p>
+
+<p>  销毁组件前执行的函数，主要用于做一些清理工作，如计时器和事件监听器的清理。</p>
+
+<h4>组件设计的好处：</h4>
+
+<ol>
+<li>通过将数据和逻辑的封装，可以提高代码的复用率</li>
+<li>通过组件高聚集低耦合的特点，降低测试的难度</li>
+<li>通过直观的语法，降低代码的复杂度。</li>
+</ol>
+
+
+<h3>组件的协同</h3>
+
+<p>组件的协同从本质上来说是对组件的一种组织、管理的方式。包含:<strong>嵌套</strong>和<strong>抽离Mixin</strong>两种方式。</p>
+
+<p>（1）嵌套-即使父子关系。</p>
+
+<p>从上列图可以看出，父组件到子组件的通信方式主要通过属性。而子组件到父组件的通信方式主要通过委托-即子组件委托父组件的函数帮忙处理事件。</p>
+
+<p>（2）抽离Mixin</p>
+
+<p>   Mixin其实就是一个对象包含一组方法。</p>
+
+<p>   Mixin的目的是抽离出组件中的相似代码。这样可增加代码的复用。</p>
+
+<p>   具体使用如下：</p>
+
+<pre><code>    //定义mixing：
+    var SetIntervalMixin = { …多个方法。}
+    //混入组件：
+    React.createClass({
+      mixing: [SetIntervalMixin],
+    })
+</code></pre>
+
+<h3>非DOM属性</h3>
+
+<p>非DOM属性即非DOM标准属性，只是在React中引入的DOM属性。</p>
+
+<table>
+<thead>
+<tr>
+<th> DOM属性名</th>
+<th style="text-align:center;"> 功能 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dangerouslySetInnerHTML</td>
+<td style="text-align:center;">在JSX中直接插入HTML代码，动态生成的，不是直接编写的。</td>
+</tr>
+<tr>
+<td>ref</td>
+<td style="text-align:center;">父组件引用子组件</td>
+</tr>
+<tr>
+<td>key</td>
+<td style="text-align:center;">提高渲染性能</td>
+</tr>
+</tbody>
+</table>
+
+
+<h3>React测试</h3>
+
+<ol>
+<li><p>React.addons.TestUtils</p>
+
+<p>该测试集合主要是封装了组件的操作，提供模拟操作，渲染组件，定位和操作子组件三个功能.</p>
+
+<pre><code>//渲染组件
+   TestUtils.renderIntoDocument(&lt;helloworld&gt;&lt;/helloworld&gt;)
+
+ //模拟操作
+  React.addons.TestUtils.Simulate.click(node) 模拟点击
+
+ //定位和操作子组件:
+  TestUtils.scryRenderedDOMComponentWithTag(subject, ‘li’)获取组件标签为li的元素
+</code></pre></li>
+<li><p>借助测试工具 jasmine</p>
+
+<p>  jasmine-react-helper对组件函数进行模拟，</p>
+
+<pre><code> //具体方法如下：
+  jasmineReact.spyonClass(组件名，组件函数名).andReturn()     
+</code></pre></li>
+<li><p>rewireify可在代码中操作局部变量 <em>Set</em>(组件名，mock的组件名)</p></li>
+</ol>
+
+
+<p>   备注： 对Mixing的测试可以分为两种：直接对Mixin的函数进行测试和在组件环境下模拟实际应用场景进行测试。</p>
+
+    </div>
+
+    <div class="sidenav">
+        <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1798401165&verifier=a4cff2e8&dpc=1"></iframe>
+    </div>
+
+    <div class="sidenav">
+        <h2>Blog</h2>
+        <ul class="artical-list">
+        
+            <li><a href="/React">React - 初步认识React</a></li>
+        
+            <li><a href="/SSH">SSH</a></li>
+        
+            <li><a href="/Ansible">自动化工具－Ansible</a></li>
+        
+            <li><a href="/Network-for-AWS">AWS相关的网络知识</a></li>
+        
+            <li><a href="/base-knowledge-for-linux">Linux操作系统下，文件系统的那些知识</a></li>
+        
+            <li><a href="/how-to-set-scope-in-custom-directive">如何在directive正确设置scope的值</a></li>
+        
+            <li><a href="/scope-in-angularJs">关于AngularJs的作用域</a></li>
+        
+        </ul>
+
+        <h2>Opinion</h2>
+        <ul class="artical-list">
+        
+        </ul>
+
+        <h2>Project</h2>
+        <ul class="artical-list">
+        
+        </ul>
+    </div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+
+    <script type="text/javascript">
+        $(function(){
+            $('.home-follow').click(function(e){
+                e.preventDefault();
+
+                if($('.home-contact').is(':visible')){
+                    $('.home-contact').slideUp(100);
+                }else{
+                    $('.home-contact').slideDown(100);
+                }
+            });
+        })
+    </script>
+    <script type="text/javascript">
+        (function() {
+        var JSAPI = {
+            ready: function(onBridgeReady) {
+                if (typeof top.window.WeixinJSBridge == 'undefined' || !top.window.WeixinJSBridge.invoke) {
+                    if (top.window.document.addEventListener) {
+                        top.window.document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                    } else if (top.window.document.attachEvent) {
+                        top.window.document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+                        top.window.document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                    }
+                } else {
+                    onBridgeReady();
+                }
+            },
+            on: function(eventName, callback) {
+                top.window.WeixinJSBridge.on(eventName, callback);
+            }
+        };
+        var onA8KeyReady = function(A8KeyUrl) {
+            if (A8KeyUrl) {
+                var params = getQueryFromURL(A8KeyUrl);
+                window.uin = params['uin'] || window.uin;
+                window.key = params['key'] || window.key;
+                window.pass_ticket = params['pass_ticket'] || window.pass_ticket;
+            }
+            seajs.use('appmsg/index.js');
+        };
+        var bridgeReadyTimer;
+        var onBridgeReady = function() {
+            window.logs.pagetime['jsapi_ready_time'] = (+new Date());
+            if (bridgeReadyTimer) {
+                clearTimeout(bridgeReadyTimer);
+            }
+            if (!window.isWeixinCached) {
+                                window.logs['is_page_cached'] = 0;
+                onA8KeyReady();
+            } else if (window.getA8KeyUrl) {
+                                window.logs.pagetime['a8key_ready_time'] = (+new Date());
+                onA8KeyReady(window.getA8KeyUrl);
+            } else {
+                                JSAPI.on('onGetA8KeyUrl', function(res) {
+                    window.logs.pagetime['a8key_ready_time'] = (+new Date());
+                    onA8KeyReady(res.url);
+                });
+            }
+        };
+
+                if (typeof window.pass_ticket !== 'undefined' && !!window.pass_ticket) {
+                        onA8KeyReady();
+        } else if (window.isInWeixinApp() == false) {
+                        onA8KeyReady();
+        } else {
+                        window.logs['is_page_cached'] = 1;
+            JSAPI.ready(onBridgeReady);
+                        bridgeReadyTimer = setTimeout(function() {
+                window.logs['jsapi_ready_fail'] = 1000;
+                onA8KeyReady();
+            }, 2000);
+        }
+    })();
+  </script>
+</body>
+</html>
