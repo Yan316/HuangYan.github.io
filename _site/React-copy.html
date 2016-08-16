@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--
+    * Author:         HuangYan
+    -->
+    <div id='wx_pic' style='margin:0 auto;display:none;'>
+        <img src='/pic300.jpeg'  style="width: 300px; height: 300px;" />
+    </div>
+    <meta charset="utf-8" />
+    <title>React - 通过Webpack来配置React的项目实例 | HuangYan</title>
+    <meta name="author" content="HuangYan" />
+    <meta name="renderer" content="webkit">
+    <meta name="description" content="HuangYan's Blog" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="/css/default.css" type="text/css" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/atom.xml" />
+    <script src="/js/jquery-1.7.1.min.js" type="text/javascript"></script>
+</head>
+<body>
+
+    <div class="home-menu">
+        <div class="home-icon-con">
+            <a class="home-menu-icon" href="/">HuangYan</a>
+            <a class="home-follow" href="#" title="Contact Me">+</a>
+        </div>
+        <div class="home-contact">
+            <a href="http://weibo.com/u/1798401165" target="_blank" style="margin-left:-5px;"><img src="http://www.weibo.com/favicon.ico" alt="" width="25"/></a>
+            <a href="http://www.douban.com/people/11059303/" target="_blank" style="text-align:center;"><img src="http://www.douban.com/favicon.ico" alt="" width="22"/></a>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="/js/prettify/prettify.css" />
+<style type="text/css">
+    body { background:#e8e8e8; }
+    @media screen and (max-width: 750px){
+        body { background:#fff; }
+    }
+    @media screen and (max-width: 1020px){
+        body { background:#fff; }
+    }
+</style>
+
+<div id="content">
+    <div class="entry">
+        <h1 class="entry-title"><a href="/React-copy" title="React - 通过Webpack来配置React的项目实例">React - 通过Webpack来配置React的项目实例</a></h1>
+        <p class="entry-date">2016-08-14</p>
+        <p>Webpack包含所有的静态资源。两大特色：code splitting 和loader。</p>
+
+<p>code splitting是根据页面自动完成生成js文件的，不需要手动处理。</p>
+
+<p>loader处理各种类型的静态文件，并支持串联操作。</p>
+
+<p>Webpack 本身只能处理 JavaScript 模块，如果要处理其他类型的文件，就需要使用 loader 进行转换。</p>
+
+<p>Loader 可以理解为是模块和资源的转换器，它本身是一个函数，接受源文件作为参数，返回转换的结果。这样，我们就可以通过 require 来加载任何类型的模块或文件，比如 CoffeeScript、 JSX、 LESS 或图片。</p>
+
+<p>先来看看 loader 有哪些特性？</p>
+
+<ul>
+<li>Loader 可以通过管道方式链式调用，每个 loader 可以把资源转换成任意格式并传递给下一个     loader ，但是最后一个 loader 必须返回 JavaScript。</li>
+<li>Loader 可以同步或异步执行。</li>
+<li>Loader 运行在 node.js 环境中，所以可以做任何可能的事情。</li>
+<li>Loader 可以接受参数，以此来传递配置项给 loader。</li>
+<li>Loader 可以通过文件扩展名（或正则表达式）绑定给不同类型的文件。</li>
+<li><p>Loader 可以通过 npm 发布和安装。</p></li>
+<li><p>除了通过 package.json 的 main 指定，通常的模块也可以导出一个 loader 来使用。</p></li>
+<li><p>Loader 可以访问配置。</p></li>
+<li><p>插件可以让 loader 拥有更多特性。</p></li>
+<li>Loader 可以分发出附加的任意文件。</li>
+</ul>
+
+
+<h3>1. npm init</h3>
+
+<p> 初始化一个package.json 文件 和 并创建一个node_modules的目录。</p>
+
+<h3>2. npm install webpack --save-dev</h3>
+
+<p>本地安装一个webpack的依赖包，并添加到package.json</p>
+
+<h3>3.touch index.html</h3>
+
+<p>添加一个index.html 文件</p>
+
+<pre><code>    &lt;!doctype html&gt;
+        &lt;html lang="en"&gt;
+            &lt;head&gt;
+                &lt;meta charset="utf-8"&gt;
+                 &lt;title&gt;New React App&lt;/title&gt;
+            &lt;/head&gt;
+            &lt;body&gt;
+                &lt;section id="react"&gt;&lt;/section&gt;
+                &lt;script src="bundle.js"&gt;&lt;/script&gt;
+            &lt;/body&gt;
+        &lt;/html&gt;
+</code></pre>
+
+<h3>4.创建一个入口文件entry.js</h3>
+
+<pre><code>    import React, { Component } from 'react';
+    import { render } from 'react-dom'
+
+    const HelloWorld = React.createClass({
+        render() {
+            return &lt;div&gt;HelloWorld&lt;/div&gt;
+     }
+    })
+
+    render(&lt;HelloWorld /&gt;, document.getElementById('react'));
+</code></pre>
+
+<h3>5.通过webpack打包 entry.js 到 bundle.js</h3>
+
+<p><img src="/images/githubpages/React-webpac-cannot-find.png" alt="不能找到webpack" /></p>
+
+<p>这是因为我们没有全局安装webpack，直接使用webpack时不能找到此命令。</p>
+
+<p>解决方法有两个：
+（1）在项目中已经存在webpack.config.js的前提下，可以在package.json中添加</p>
+
+<pre><code>"scripts": {
+    "build": "webpack --progress --colors"
+}
+</code></pre>
+
+<p>运行npm run build即运行webpack。</p>
+
+<p>（2）使用局部webpack脚本: node_modules/webpack/bin/webpack.js ./entry.js bundle.js</p>
+
+<h3>10.npm install react react-dom --save-dev</h3>
+
+<h3>11. 不能识别jsx代码，安装相应的loader</h3>
+
+<p><img src="/images/githubpages/webpack-react-with-jsx-error.png" alt="jsx-error" /></p>
+
+<p>（1）npm installbabel-loader (ex 6to5-loader) or jsx-loader for JS(X) files,  babel-core,  babel-preset-react, babel-preset-es2015</p>
+
+<p>（2）在更目录下添加 .babelrc 文件</p>
+
+<pre><code>    {
+        "presets": ["react", "es2015"]
+    }
+</code></pre>
+
+<p>否则不会识别jsx的代码。</p>
+
+<p>(3) 创建webpack的配置文件 - webpack.config.js</p>
+
+<pre><code>    module.exports = {
+        entry: [
+         "./entry.js"
+         ],
+        output: {
+         path: __dirname,
+         filename: "bundle.js"
+        },
+        module: {
+         loaders: [
+            { test: /\.jsx?$/, loaders: ['babel'], exclude: /node_modules/ }
+         ]
+        }
+    };
+</code></pre>
+
+<h3>6.引入样式loader:css-loader，style-loader</h3>
+
+<p>命令： npm install css-loader style-loader --save-dev
+创建css文件：touch style.css</p>
+
+<pre><code>    div {
+        background-color: green; 
+    }
+</code></pre>
+
+<p>css-loader 读取css文件
+style-loader将样式插入到页面里</p>
+
+<p>引入entry.js,  需添加require("!style!css!./style.css");</p>
+
+<p>require(“./style.css") 而不是添加 require("!style!css!./style.css")的两种解决办法：</p>
+
+<h4>*打包时添加 —module-bind ‘css=style!css’</h4>
+
+<h4>*配置文件webpack.config.js</h4>
+
+<pre><code>module: {
+    loaders: [
+        { test: /\.css$/, loader: "style!css" }
+    ]
+}
+</code></pre>
+
+<h3>7. 添加webpack-dev-server - npm install webpack-dev-server --save-dev</h3>
+
+<p>webpack-dev-server，它将在 localhost:8080 启动一个 express 静态资源 web 服务器，并且会以监听模式自动运行 webpack，在浏览器打开 http://localhost:3030/ 或http://localhost:3030/webpack-dev-server/ 可以浏览项目中的页面和编译后的资源输出，并且通过一个 socket.io 服务实时监听它们的变化并自动刷新页面。</p>
+
+<p>在webpack.config.js文件中添加一个entry-  "webpack-dev-server/client?http://localhost:3030"</p>
+
+<p>在package.json 的script中添加：</p>
+
+<pre><code>    "start": "webpack-dev-server  --hot --progress --colors --port 3030"
+</code></pre>
+
+<h3>9. npm install react-hot-loader --save-dev</h3>
+
+<p>React Hot Loader is a plugin for Webpack that allows instantaneous live refresh without losing state while editing React components.
+即指在编写react代码时，能够让修改的部分自动刷新，不会引起失去react的state。和网页刷新不同。
+在配置文件entry中添加"webpack/hot/only-dev-server"</p>
+
+<p>将
+"start": "webpack-dev-server --progress —colors --port 3030” 添加 --hot
+或者加入plugin
+var webpack = require('webpack');
+plugins: [ new webpack.HotModuleReplacementPlugin()]</p>
+
+<h3>8.restructure</h3>
+
+<p>根据<a href="https://reactjsnews.com/structuring-react-projects">文章</a>重组项目结构。</p>
+
+<h3>12. 添加 jsx的内容</h3>
+
+<p>require("../css/style.css");</p>
+
+<p>import React, { Component } from 'react';
+import { render } from 'react-dom'</p>
+
+<p>const routes = (
+      <div>Hello</div>
+)</p>
+
+<p>render(routes, document.getElementById('react'));</p>
+
+    </div>
+
+    <div class="sidenav">
+        <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1798401165&verifier=a4cff2e8&dpc=1"></iframe>
+    </div>
+
+    <div class="sidenav">
+        <h2>Blog</h2>
+        <ul class="artical-list">
+        
+            <li><a href="/React">React - 初步认识React</a></li>
+        
+            <li><a href="/React-copy">React - 通过Webpack来配置React的项目实例</a></li>
+        
+            <li><a href="/SSH">SSH</a></li>
+        
+            <li><a href="/Ansible">自动化工具－Ansible</a></li>
+        
+            <li><a href="/Network-for-AWS">AWS相关的网络知识</a></li>
+        
+            <li><a href="/base-knowledge-for-linux">Linux操作系统下，文件系统的那些知识</a></li>
+        
+            <li><a href="/how-to-set-scope-in-custom-directive">如何在directive正确设置scope的值</a></li>
+        
+            <li><a href="/scope-in-angularJs">关于AngularJs的作用域</a></li>
+        
+        </ul>
+
+        <h2>Opinion</h2>
+        <ul class="artical-list">
+        
+        </ul>
+
+        <h2>Project</h2>
+        <ul class="artical-list">
+        
+        </ul>
+    </div>
+</div>
+
+<script src="/js/post.js" type="text/javascript"></script>
+
+
+    <script type="text/javascript">
+        $(function(){
+            $('.home-follow').click(function(e){
+                e.preventDefault();
+
+                if($('.home-contact').is(':visible')){
+                    $('.home-contact').slideUp(100);
+                }else{
+                    $('.home-contact').slideDown(100);
+                }
+            });
+        })
+    </script>
+    <script type="text/javascript">
+        (function() {
+        var JSAPI = {
+            ready: function(onBridgeReady) {
+                if (typeof top.window.WeixinJSBridge == 'undefined' || !top.window.WeixinJSBridge.invoke) {
+                    if (top.window.document.addEventListener) {
+                        top.window.document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                    } else if (top.window.document.attachEvent) {
+                        top.window.document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+                        top.window.document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                    }
+                } else {
+                    onBridgeReady();
+                }
+            },
+            on: function(eventName, callback) {
+                top.window.WeixinJSBridge.on(eventName, callback);
+            }
+        };
+        var onA8KeyReady = function(A8KeyUrl) {
+            if (A8KeyUrl) {
+                var params = getQueryFromURL(A8KeyUrl);
+                window.uin = params['uin'] || window.uin;
+                window.key = params['key'] || window.key;
+                window.pass_ticket = params['pass_ticket'] || window.pass_ticket;
+            }
+            seajs.use('appmsg/index.js');
+        };
+        var bridgeReadyTimer;
+        var onBridgeReady = function() {
+            window.logs.pagetime['jsapi_ready_time'] = (+new Date());
+            if (bridgeReadyTimer) {
+                clearTimeout(bridgeReadyTimer);
+            }
+            if (!window.isWeixinCached) {
+                                window.logs['is_page_cached'] = 0;
+                onA8KeyReady();
+            } else if (window.getA8KeyUrl) {
+                                window.logs.pagetime['a8key_ready_time'] = (+new Date());
+                onA8KeyReady(window.getA8KeyUrl);
+            } else {
+                                JSAPI.on('onGetA8KeyUrl', function(res) {
+                    window.logs.pagetime['a8key_ready_time'] = (+new Date());
+                    onA8KeyReady(res.url);
+                });
+            }
+        };
+
+                if (typeof window.pass_ticket !== 'undefined' && !!window.pass_ticket) {
+                        onA8KeyReady();
+        } else if (window.isInWeixinApp() == false) {
+                        onA8KeyReady();
+        } else {
+                        window.logs['is_page_cached'] = 1;
+            JSAPI.ready(onBridgeReady);
+                        bridgeReadyTimer = setTimeout(function() {
+                window.logs['jsapi_ready_fail'] = 1000;
+                onA8KeyReady();
+            }, 2000);
+        }
+    })();
+  </script>
+</body>
+</html>
